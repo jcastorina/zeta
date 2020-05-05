@@ -1,0 +1,25 @@
+body {
+   
+    background: #111;
+    
+    color: #eee;
+}
+
+a {
+    color: #33F
+}
+
+#buttons {
+    display: flex;
+    float: left;
+}
+
+.green{
+    color: #0F0
+
+}
+
+.blue{
+    color: #00F
+
+}

@@ -1,0 +1,19 @@
+GET http://localhost:8000/api/users/current
+//Authorization: Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibHV0ZXMiLCJpZCI6IjVlYWUwYjM1NzA2ODc2NTViMTY1MDc3OCIsImV4cCI6MTU5MzY0ODQzNywiaWF0IjoxNTg4NDY0NDM3fQ.k5eo7F4hHKsNVHPcwdLjH6CGuTfCkSa7czZbVvZOGLE
+###
+
+POST http://localhost:8000/api/users
+Content-Type: application/json
+
+###
+
+GET http://localhost:3000/users/1234
+
+
+
+//{
+//    "user": {
+//        "name": "lutes",
+//        "password": "lutes"
+//    }
+//}

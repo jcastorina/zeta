@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <link rel="stylesheet" href="style.css">
+        <title><%= title %></title>
+    </head>
+    <body>
+        <h1>Login</h1>
+        <%= messages.flash %>
+        <form action="/login" method="post">
+            <div>
+                <label>username:</label>
+                <input type="text" name="username"/>
+            </div>
+            <div>
+                <label>password:</label>
+                <input type="password" name="password"/>
+            </div>
+            <div>
+                <input type="submit" value="log in"/>
+            </div>
+        </form>
+        <a href="/register" method="GET">register</button>
+    </body>
+</html>
