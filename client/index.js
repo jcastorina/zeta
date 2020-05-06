@@ -1,39 +1,34 @@
 const express = require('express');
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const passport = require('passport');
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
+const session = require('express-session');
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const MongoStore = require('connect-mongo')(session);
+const crypto = require('crypto');
+//const cookieParser = require('cookie-parser');
+
+require('dotenv').config();
+
 const flash = require('express-flash');
 //const path = require('path');
-const methodOverride = require('method-override');
+//const methodOverride = require('method-override');
 const app = express();
-
-var mongoDB = 'mongodb+srv://jcastorina:dbUserPassword@userdata-echiv.mongodb.net/users?retryWrites=true&w=majority'
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true },);
-
 app.set('views', './client/views');
 app.set('view engine', 'ejs');
-
+//app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('./client/views'));
-//app.use('/views', express.static(path.join(__dirname,"public")));
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(session({ 
-    secret: 'keyboard cat',
-    cookie: { maxAge: 60000 },
-    resave: false,
-    saveUninitialized: false
-}));
+const mongoDB = 'mongodb+srv://jcastorina:dbUserPassword@userdata-echiv.mongodb.net/users?retryWrites=true&w=majority'
+const connection = mongoose.createConnection(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
 
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(methodOverride('_method'))
 
-require('./models/User');
+require('./models/User.js')
+
 require('./middleware/passport-config.js');
+
 
 const Users = mongoose.model('Users');
 
@@ -46,6 +41,28 @@ passport.deserializeUser(function(id, done) {
       done(err, user);
     });
 });
+
+const sessionStore = new MongoStore({ 
+    mongooseConnection: connection,
+    collection: 'sessions'
+})
+
+app.use(session({ 
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    store: sessionStore,
+    cookie: { 
+        expires: Date.now() + 1000
+    },
+    
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash());
+//app.use(methodOverride('_method'))
 
 app.use(require('./routes'));
 

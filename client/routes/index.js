@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const Users = mongoose.model('Users');
+
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 
@@ -16,11 +17,11 @@ router.all('/', function (req, res, next) {
 
 router.post('/register', auth.isNotAuth, (req, res, next) => {
     const { body } = req;
-
+    
     const finalUser = new Users(body);
-  
+   
     finalUser.setPassword(body.password);
-  
+    console.log(finalUser)
     return finalUser.save()
       .then(() => { res.redirect('/')})//res.json({ body: finalUser.toAuthJSON() }));
 });
@@ -89,8 +90,14 @@ router.get('/newChar', auth.isAuth, (req,res)=>{
     res.render('newChar.ejs', { title: 'Z E T A ('+name+')', message: name})
 })
 
-//end session
-router.delete('/logout', (req, res) =>{
+//This used to work but stopped working when i did the cookie refactor
+//router.delete('/logout', (req, res) =>{
+//    req.logOut()
+//    res.redirect('/login')
+//})
+
+//i do it with a str8 up post now
+router.post('/logout', (req, res) =>{
     req.logOut()
     res.redirect('/login')
 })

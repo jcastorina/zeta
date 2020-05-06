@@ -40,4 +40,7 @@ Users.methods.toAuthJSON = function() {
     };
 };
 
-mongoose.model('Users', Users);
+//mongoose.model('Users', Users)
+
+//module.export = Users;
+module.exports = mongoose.model('Users', Users);

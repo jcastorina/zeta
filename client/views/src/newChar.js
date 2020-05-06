@@ -1,10 +1,5 @@
 var chars = document.getElementById('newChar')
-//"src","img/megaman.png"
-//"src","img/mario.png"
-//"src","img/whitemage.png"
 var available = ["mario","megaman","whitemage"]
-//<input type="checkbox" id="charSel1" style="display: ">
-//<label for="charSel1"><img src="img/megaman.png"></label>
 
 //create form and event handlers
 for(var i in available){
@@ -19,19 +14,13 @@ for(var i in available){
     input.setAttribute("name", available[i])
     input.setAttribute("id", available[i])
     input.setAttribute("style", "display: none; padding: 15px")
-    //img.setAttribute("class","charSel");
     img.onclick = stickBox;
     img.onmouseover = hoverBox;
     img.onmouseleave = removeBox;
     lab.appendChild(input);
     lab.appendChild(img);
-    //lab.append(available[i])
     div.appendChild(lab);
     chars.appendChild(div);
-}
-
-function setVal(){
-
 }
 
 function hoverBox(){
