@@ -18,9 +18,19 @@ fieldset {
     border-radius: 7px;
     border-style: groove;
     margin: -2px;
+    padding: 7px;
+}
+
+.baseborder {
+    padding: 7px;
 }
 
 #buttons {
+    display: flex;
+    float: left;
+}
+
+#newChar {
     display: flex;
     float: left;
 }
@@ -38,8 +48,4 @@ fieldset {
 .blue{
     color: #00F
 
-}
-
-#charSel {
-    padding: 5px;
 }
