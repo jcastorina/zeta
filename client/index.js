@@ -1,12 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+//const { Schema } = mongoose;
 const session = require('express-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const MongoStore = require('connect-mongo')(session);
-const crypto = require('crypto');
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+//const crypto = require('crypto');
 //const cookieParser = require('cookie-parser');
+
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+}
 
 require('dotenv').config();
 
@@ -66,6 +74,13 @@ app.use(flash());
 
 app.use(require('./routes'));
 
-PORT = 3000;
+HTTP_PORT = 8080;
+HTTPS_PORT = 8443;
 
-app.listen(PORT, ()=>{console.log(`app listening on port ${PORT}`)})
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(options, app);
+
+httpServer.listen(HTTP_PORT, ()=>{console.log(`HTTP listening on port ${HTTP_PORT}`)})
+httpsServer.listen(HTTPS_PORT, ()=>{console.log(`HTTPS listening on port ${HTTPS_PORT}`)})
+
+//app.listen(PORT, ()=>{console.log(`app listening on port ${PORT}`)})
