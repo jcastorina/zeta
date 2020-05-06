@@ -90,6 +90,11 @@ router.get('/newChar', auth.isAuth, (req,res)=>{
     res.render('newChar.ejs', { title: 'Z E T A ('+name+')', message: name})
 })
 
+router.get('/join', auth.isAuth, (req,res)=>{
+    let name = req.user.username;
+    res.render('join.ejs', { title: 'Z E T A ('+name+')', message: name})
+})
+
 //This used to work but stopped working when i did the cookie refactor
 //router.delete('/logout', (req, res) =>{
 //    req.logOut()
