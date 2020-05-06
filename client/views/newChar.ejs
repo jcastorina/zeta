@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <title><%= title %></title>
+    </head>
+    <body>
+        <h1 style="font-weight: bold">Ok <strong class="uname"><%= message %></strong>, let's make a new character:</h1>
+        <form action="/newChar" method="POST" class="selectFriends" id="selectFriends">
+            <fieldset> <legend>Choose Race</legend>
+                <div id="newChar">
+                    <img src="img/megaman.png" id="charSel">
+                    <img src="img/mario.png" id="charSel">
+                    <img src="img/whitemage.png" id="charSel">
+                </div>
+                <br><br><br><br><br>
+                <button type="submit">Create</button>
+            </fieldset>
+        </form>
+        <br>
+        <br>
+        <br>
+        <form action="/" method="GET">
+            <button type="submit">Home</button>
+        </form>
+    </body>
+    <script src="../src/newChar.js"></script>
+</html>

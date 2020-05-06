@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <title><%= title %></title>
+    </head>
+    <body>
+        <h1 style="font-weight: bold">Ok <strong class="uname"><%= message %></strong>, let's make a party:</h1>
+        <form action="/newParty" method="POST" class="selectFriends" id="selectFriends">
+            <fieldset> <legend>Choose Friends</legend>
+                <div id="friendSelector"></div>
+                <button type="submit">Create</button>
+            </fieldset>
+        </form>
+        <br>
+        <br>
+        <br>
+        <div id="main" class="main">
+            <strong class="green">ONLINE: </strong><weak id="online"><%= online %></weak>
+        </div>
+        <br>
+        <form action="/" method="GET">
+            <button type="submit">Home</button>
+        </form>
+    </body>
+    <script src="../src/newParty.js"></script>
+</html>
