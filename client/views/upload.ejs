@@ -5,18 +5,24 @@
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="icon" href="favicon-32x32.png" type="image/x-icon">
+        <script src="jquery-3.5.1.js"></script>
         <title><%= title %></title>
     </head>
     <body>
-        <h1 style="font-weight: bold">Ok <strong class="uname"><%= message %></strong>, let's make a party:</h1>
+        <h1 style="font-weight: bold">Ok <strong class="uname"><%= message %></strong>, please select file to upload</h1>
         <pre id="notify" class><h1 id="fader"> </h1></pre>
-        <form action="/newParty" method="POST" class="selectFriends" id="selectFriends">
-            <fieldset id="global"> <legend>Choose Friends</legend>
-                <div id="blueScreen">
+        <form class="upload" id="upload">
+            <fieldset id="global"> <legend>Select File</legend>
+                <!--div id="blueScreen"-->
                     <p id="p0"></p>
-                    <div id="friendSelector"></div>
-                <button type="submit">Create</button>
+                    <div id="upload">
+                        <input type="file" id="inputfile" multiple>
+                        <div id="preview"></div>
+                        
                     </div>
+                    <div id="status"></div>
+                <button type="submit" id="subbut">Upload</button>
+                    <!--/div-->
             </fieldset>
         </form>
         <br>
@@ -30,6 +36,6 @@
             <button type="submit">Home</button>
         </form>
     </body>
-    <script src="../src/newParty.js"></script>
+    <script src="../src/upload.js"></script>
     <script src="../src/global.js"></script>
 </html>

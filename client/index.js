@@ -8,8 +8,13 @@ const MongoStore = require('connect-mongo')(session);
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const terminal = require('web-terminal');
+const multer = require('multer')
+const sharp = require('sharp')
+const uuid = require('uuid')
+
 //const crypto = require('crypto');
-//const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 
 const options = {
     key: fs.readFileSync('key.pem'),
@@ -18,15 +23,17 @@ const options = {
 
 require('dotenv').config();
 
-const flash = require('express-flash');
+const flash = require('connect-flash');//changed from express to connect
 //const path = require('path');
 //const methodOverride = require('method-override');
 const app = express();
 app.set('views', './client/views');
 app.set('view engine', 'ejs');
-//app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());//added
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(express.static('./client/views'));
+app.use(express.static('./uploads/'))//saving imgs here
 
 const mongoDB = 'mongodb+srv://jcastorina:dbUserPassword@userdata-echiv.mongodb.net/users?retryWrites=true&w=majority'
 const connection = mongoose.createConnection(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -79,10 +86,11 @@ HTTPS_PORT = 8443;
 
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(options, app);
+terminal(httpServer);
 
 httpServer.listen(HTTP_PORT, ()=>{console.log(`HTTP listening on port ${HTTP_PORT}`)})
 httpsServer.listen(HTTPS_PORT, ()=>{console.log(`HTTPS listening on port ${HTTPS_PORT}`)})
-
+console.log(`web terminal accessible at ${HTTP_PORT}/terminal`)
 
 
 //app.listen(PORT, ()=>{console.log(`app listening on port ${PORT}`)})

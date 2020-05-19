@@ -12,4 +12,9 @@ function isNotAuth(req, res, next) {
     next()
 }
 
-module.exports = { isAuth, isNotAuth }
+function hi(req, res, next) {
+    console.log('hi')
+    next()
+}
+
+module.exports = { isAuth, isNotAuth, hi }

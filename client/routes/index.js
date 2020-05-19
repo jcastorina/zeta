@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const Users = mongoose.model('Users');
-
+const fs = require('fs');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 
@@ -26,7 +26,7 @@ router.post('/register', auth.isNotAuth, (req, res, next) => {
       .then(() => { res.redirect('/')})//res.json({ body: finalUser.toAuthJSON() }));
 });
 
-router.post('/login', auth.isNotAuth,
+router.post('/login', auth.isNotAuth, 
     passport.authenticate('local', { successRedirect: '/',
                                    failureRedirect: '/login',
                                    failureFlash: true })
@@ -44,16 +44,39 @@ router.post('/newChar', auth.isAuth, (req,res, next)=>{
     res.redirect('/');
 })
 
+router.post('/upload', auth.isAuth, (req,res,next)=>{
+    const { body } = req;
+    console.log(body);
+    res.redirect('/');
+})
+
 //////////////////////////
 //  GET ROUTES          //
 //////////////////////////
+
+//attempted flash message hack
+//router.get('*', function(req,res,next){
+//    res.locals.error = req.flash('error');
+//    next();
+//})
 
 router.get('/register', auth.isNotAuth, (req,res)=>{
     res.render('register.ejs', { title: 'Z E T A'});
 })
 
+async function waitForFlash(req){
+    let flash = await req.flash('error')   
+    if(flash.length>0){
+        return flash
+    } else {
+        return [' ']
+    }
+}
+
 router.get('/login', auth.isNotAuth, (req,res)=>{
-    res.render('login.ejs', { title: 'Z E T A'});
+    waitForFlash(req)
+    .then(flash=>res.render('login.ejs', { message: flash[0], title: 'topsecretproject'}))
+    .catch(e=>console.log('error with the flash message',e))
 })
 
 router.get('/', auth.isAuth, (req,res)=>{
@@ -73,6 +96,7 @@ router.get('/', auth.isAuth, (req,res)=>{
 })
 
 router.get('/newParty', auth.isAuth, (req,res)=>{
+   
     Users.find((err, users)=>{
         if (err) return console.err(err);
         let all = []
@@ -100,6 +124,36 @@ router.get('/game', auth.isAuth, (req,res)=>{
     res.render('game.ejs', { title: 'Z E T A ('+name+')', message: name})
 })
 
+async function printP(path){
+    console.log('running printP')
+    const files = await fs.promises.readdir(path);
+    for await (const file of files){
+        console.log(file)
+    }
+}
+
+//console.log(fs.promises);
+
+//printP('/home/jc3').catch(console.error);
+
+router.get('/upload', auth.isAuth, (req,res)=>{
+    
+    
+
+    Users.find((err, users)=>{
+        if (err) return console.err(err);
+        let all = []
+        for(let i in users){
+            all.push(users[i].username)
+        }
+        let name = req.user.username;
+     
+        res.render('upload.ejs', { title: 'Z E T A ('+name+')', message: name, online: all })
+    })
+       
+    
+})
+
 //This used to work but stopped working when i did the cookie refactor
 //router.delete('/logout', (req, res) =>{
 //    req.logOut()
@@ -116,5 +170,6 @@ router.post('/logout', (req, res) =>{
 //    console.log(req);
 //    res.send(req.params)
 //})
+
 
 module.exports = router;

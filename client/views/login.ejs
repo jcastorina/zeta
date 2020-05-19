@@ -8,22 +8,45 @@
         <title><%= title %></title>
     </head>
     <body>
-        <h1>Login</h1>
-        <%= messages.flash %>
-        <form action="/login" method="post">
-            <div>
-                <label>username:</label>
-                <input type="text" name="username"/>
-            </div>
-            <div>
-                <label>password:</label>
-                <input type="password" name="password"/>
-                <p style="color: #d00; font-style: bolder">(CAUTION: Your password is not protected. Use a fun one ^_^)</p>
-            </div>
-            <div>
-                <input type="submit" value="log in"/>
-            </div>
-        </form>
-        <a href="/register" method="GET">register</button>
+
+        <h1>Howdy, stranger. Let's get ya logged in.</h1>
+        <pre id="error" class=><h1 id='fader'><%= message %></h1></pre>
+        <fieldset><legend>login</legend>
+            <form action="/login" method="post">
+        <div class=><!--wrapper-->
+            <div class="col-cont">
+                <div class="col0">
+                    <div class="input-tag">
+                        <label>username:</label>
+                    </div>
+                    <div class="input-tag">
+                        <label>password:</label>
+                    </div>
+                </div>
+                <div class="col1">
+                    <div>
+                        <input type="text" name="username"/>
+                    </div>
+                    <div>
+                        <input type="password" name="password"/>
+                        
+                    </div>
+                </div>
+             
+               
+              
+            </div>       
+            <input type="submit" value="log in"/> 
+        </div> 
+          
+
+            </form>
+        
+        </fieldset>
+        <div class="outerButton">
+            <a href="/register" method="GET">register</a>
+        </div>
+
     </body>
+    <script src="../src/login.js"></script>
 </html>

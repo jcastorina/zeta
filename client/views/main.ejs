@@ -6,33 +6,41 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="icon" href="favicon-32x32.png" type="image/x-icon">
         <title><%= title %></title>
+        <script src="jquery-3.5.1.js"></script>
     </head>
     <body>
-        <h1 style="font-weight: bold">Hi, <strong class="uname"><%= message %></strong>!</h1>
-        <fieldset><legend>Characters</legend>nads</fieldset>
-        <div id="wrapButtons">
-            <div id="buttons">
-                <form action="/newChar" method="GET">
-                    <button type="submit">New Character</button>
-                </form>
-                <form action="/newParty" method="GET">
-                    <button type="submit">New Party</button>
-                </form>
-                <form action="/join" method="GET">
-                    <button type="submit">Join Party</button>
-                </form>
+        <h1 style="font-weight: bold">Hey, <strong class="uname"><%= message %></strong>!</h1>
+        <pre id="notify" class style="padding-right: 100px; font-size: large;"><h1 id="fader">The Operator</h1></pre>
+        <fieldset id="global"><legend>Characters</legend>
+         
+            <div id="blueScreen">
+                <p id="p0"></p>
+                <div id="blueScreenTextWrapper"></div>
+                
+
             </div>
-        </div>
+            <div id="wrapButtons">
+                <div class="left">
+                    <a class="right" href="/newChar" method="GET">New Character</a>
+                </div>
+                <div class="right">
+                    <a class="left" href="/newParty" method="GET">New Party</a>
+                </div>                
+                
+            </div>
+        </fieldset>
         <br>
         <br>
         <br>
         <div id="main" class="main">
             <strong class="green">ONLINE:</strong> <%= online %>
         </div>
+        <a style="padding-left: 500px" href="/upload" method="GET">upload</a>
         <br>
         <form action="/logout?_method=DELETE" method="POST">
             <button type="submit">Log Out</button>
         </form>
     </body>
-    <script src="../src/promise.js"></script>
+    <script src="../src/main.js"></script>
+    <script src="../src/global.js"></script>
 </html>
