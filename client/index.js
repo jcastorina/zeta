@@ -9,9 +9,7 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const terminal = require('web-terminal');
-const multer = require('multer')
-const sharp = require('sharp')
-const uuid = require('uuid')
+
 
 //const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
@@ -30,7 +28,7 @@ const app = express();
 app.set('views', './client/views');
 app.set('view engine', 'ejs');
 app.use(cookieParser());//added
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('./client/views'));
 app.use(express.static('./uploads/'))//saving imgs here

@@ -1,50 +1,31 @@
 const inputElement = document.getElementById('inputfile');
 const preview = document.getElementById('preview');
+const formBack = document.createElement('form');
+formBack.setAttribute("action","/upload")
+formBack.setAttribute("method","GET")
+formBack.setAttribute("hidden","true")
+document.body.append(formBack)
 
 let fileList;
 
 inputElement.addEventListener('change', handleFiles, false);
 
-document.getElementById('subbut').onsubmit = (event) => {
+document.getElementById('subbut').onclick = (event) => {
+  
     event.preventDefault(); //prevent form from posting without JS
     var xhttp = new XMLHttpRequest(); //create new AJAX request
+  /*  xhttp.onload = ()=>{
+        document.forms[2].submit();
+    }*/
 
-    xhttp.onreadystatechange = () => {
-        if (this.readystate === 4 && this.status === 200){//server success
-            document.getElementById('status').innerHTML = 'sent '+this.responseText+xhttp.status;
-        } else {
-            document.getElementById('status').innerHTML = xhttp.status;
-        }
-    }
 
     xhttp.open('POST','upload')
     var formData = new FormData();
     formData.append('imageFile', document.getElementById('inputfile').files[0])
-    xhttp.send(formData);
+    xhttp.send(formData)
+
 }
 
-
-
-/*button.addEventListener('click', uploadFile, false);
-function uploadFile(){
-    let blobFile = fileList[0]
-    let formData = new FormData();
-    formData.append('fileToUpload', blobFile)
-
-    $.ajax({
-        url: '/upload',
-        type: 'post',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: (response)=>{
-            console.log('success upload ')
-        },
-        error: (jqXHR, textStatus, errorMessage)=>{
-            console.log(errorMessage, ' shocker')
-        }
-    })
-}*/
 
 function handleFiles(files) {
     fileList = this.files;

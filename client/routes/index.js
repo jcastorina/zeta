@@ -5,6 +5,11 @@ const Users = mongoose.model('Users');
 const fs = require('fs');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
+const multer = require('multer')
+const upload = multer({limits:{fileSize:10000000}}).single('imageFile')
+const sharp = require('sharp')
+const uuid = require('uuid').v4
+console.log(uuid())
 
 router.all('/', function (req, res, next) {
     console.log('req received on \'/\'')
@@ -44,10 +49,31 @@ router.post('/newChar', auth.isAuth, (req,res, next)=>{
     res.redirect('/');
 })
 
-router.post('/upload', auth.isAuth, (req,res,next)=>{
-    const { body } = req;
-    console.log(body);
-    res.redirect('/');
+
+router.post('/upload', auth.isAuth, (req,res)=>{
+    
+    upload(req, res, async (err) =>{
+    //check for errors, e.g. multer exceed filesize
+    if(err||req.file === undefined){
+        console.log(err)
+        res.send('whoopsy')
+    } else {
+        //it worked: req.file has file
+        let fileName = uuid() + '.jpeg'
+        var image = await sharp(req.file.buffer)
+        
+        .jpeg({
+            quality: 40,
+        })
+        .toFile('./client/uploads/'+fileName)
+        .catch( err => { console.log('error: ' + err)})
+        return res.redirect('back');
+        
+    }
+    }
+    )
+    
+    
 })
 
 //////////////////////////
@@ -124,22 +150,9 @@ router.get('/game', auth.isAuth, (req,res)=>{
     res.render('game.ejs', { title: 'Z E T A ('+name+')', message: name})
 })
 
-async function printP(path){
-    console.log('running printP')
-    const files = await fs.promises.readdir(path);
-    for await (const file of files){
-        console.log(file)
-    }
-}
-
-//console.log(fs.promises);
-
-//printP('/home/jc3').catch(console.error);
 
 router.get('/upload', auth.isAuth, (req,res)=>{
     
-    
-
     Users.find((err, users)=>{
         if (err) return console.err(err);
         let all = []
@@ -149,9 +162,8 @@ router.get('/upload', auth.isAuth, (req,res)=>{
         let name = req.user.username;
      
         res.render('upload.ejs', { title: 'Z E T A ('+name+')', message: name, online: all })
-    })
-       
-    
+   })
+  
 })
 
 //This used to work but stopped working when i did the cookie refactor
