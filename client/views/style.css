@@ -162,3 +162,8 @@ canvas {
     margin: -2px;
     padding: 7px;
 }
+
+#imagePad > img {
+    height: 50px;
+    
+}

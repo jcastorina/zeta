@@ -155,20 +155,15 @@ router.get('/myChar', auth.isAuth, (req,res)=>{
         }
         
         let id = req._passport.session.user    
-        
-        
-        var img
    
         Users.findById(id,(err,user)=>{
             if (err) { console.log(err) }
             else {
                 const { images } = user
-                console.log(images)
-                res.render('myChar.ejs', { title: 'Z E T A ('+name+')', message: name, online: all, images: images })
+              
+                res.render('myChar.ejs', { title: 'Z E T A ('+name+')', message: name, online: all, images: images, num: images.length })
             }
-        })
-
-        
+        })        
     })
 })
 

@@ -9,21 +9,19 @@
         <title><%= title %></title>
     </head>
     <body>
-        <h1 style="font-weight: bold">Ok <strong class="uname"><%= message %></strong>, please select file to upload</h1>
+        <h1 style="font-weight: bold">Ok <strong class="uname"><%= message %></strong>, please review your files</h1>
         <pre id="notify" class><h1 id="fader"> </h1></pre>
         <form class="upload" id="upload" action="/#">
             <fieldset id="global"> <legend>Select File</legend>
-                <!--div id="blueScreen"-->
+             
                     <p id="p0"></p>
-                    <div id="upload">
-                        <input type="file" id="inputfile"><!--add the "multiple" option at the end: multiple>-->
-                        <div id="preview"></div>
+                    <div id="imagePad">
+                       
                         
                     </div>
               
-                    <button id="subbut">iono</a>
-                <!--button type="submit" id="subbut">Upload</button-->
-                    <!--/div-->
+       
+        
             </fieldset>
         </form>
         <br>
@@ -31,17 +29,18 @@
         <br>
         <div id="main" class="main">
             <strong class="green">ONLINE: </strong><weak id="online"><%= online %></weak>
-            <strong class="green">IMAGES: </strong><weak id="online"><%= images %></weak>
-            <img src="<%= images[1] %>">
+            
+            <input id="num" hidden="true" value="<%=num%>"></input>
+            <input id="imageArray" hidden="true" value="<%=images%>"></input>
         </div>
         <br>
         <form action="/" method="GET">
             <button type="submit">Home</button>
         </form>
         <form action="/upload" method="GET">
-            <button type="submit">myChar</button>
+            <button type="submit">upload</button>
         </form>
     </body>
-    <script src="../src/upload.js"></script>
+    <script src="../src/myChar.js"></script>
     <script src="../src/global.js"></script>
 </html>
