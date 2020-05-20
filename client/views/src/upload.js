@@ -1,35 +1,45 @@
-const inputElement = document.getElementById('inputfile');
 const preview = document.getElementById('preview');
-const formBack = document.createElement('form');
-formBack.setAttribute("action","/upload")
-formBack.setAttribute("method","GET")
-formBack.setAttribute("hidden","true")
-document.body.append(formBack)
 
 let fileList;
 
-inputElement.addEventListener('change', handleFiles, false);
+function init() {
+    let inputElement = document.getElementById('inputfile');
+    inputElement.addEventListener('change', handleFiles, false);
+    return inputElement
+}
 
-document.getElementById('subbut').onclick = (event) => {
-  
+init();
+
+function upFile (event) {
     event.preventDefault(); //prevent form from posting without JS
     var xhttp = new XMLHttpRequest(); //create new AJAX request
-  /*  xhttp.onload = ()=>{
-        document.forms[2].submit();
-    }*/
-
+    let el = init()
+    let file = el.files[0]
 
     xhttp.open('POST','upload')
     var formData = new FormData();
-    formData.append('imageFile', document.getElementById('inputfile').files[0])
+    formData.append('imageFile', file)
     xhttp.send(formData)
+    
+    let previewClone = document.createElement('div')
+    previewClone.setAttribute('id','preview')
+    
+    let inputClone = document.createElement('input')
+    inputClone.setAttribute('id','inputfile')
+    inputClone.setAttribute('type','file')
+    
+    inputClone.addEventListener('change', handleFiles, false);
+
+    el.replaceWith( inputClone )
+    preview.innerHTML = ''
+    formData.delete('imageFile')
 
 }
 
-
 function handleFiles(files) {
     fileList = this.files;
-
+   
+    
     for (let i = 0; i < fileList.length; i++){
         
         const file = fileList[i]
@@ -37,6 +47,7 @@ function handleFiles(files) {
         
         const img = document.createElement('img');
         img.classList.add('obj');
+        img.setAttribute('id','imgUpload')
         img.file = file;
         preview.appendChild(img)
 
@@ -47,3 +58,4 @@ function handleFiles(files) {
     }
 }
 
+document.getElementById('subbut').onclick = upFile

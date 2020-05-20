@@ -31,15 +31,16 @@
         <br>
         <div id="main" class="main">
             <strong class="green">ONLINE: </strong><weak id="online"><%= online %></weak>
+            <strong class="green">IMAGES: </strong><weak id="online"><%= images %></weak>
+            <img src="<%= images[1] %>">
         </div>
         <br>
-        <form action="/myChar" method="GET">
-            <button type="submit">myChar</button>
-        </form>
         <form action="/" method="GET">
             <button type="submit">Home</button>
         </form>
-
+        <form action="/upload" method="GET">
+            <button type="submit">myChar</button>
+        </form>
     </body>
     <script src="../src/upload.js"></script>
     <script src="../src/global.js"></script>

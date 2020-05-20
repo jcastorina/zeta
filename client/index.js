@@ -31,11 +31,11 @@ app.use(cookieParser());//added
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('./client/views'));
-app.use(express.static('./uploads/'))//saving imgs here
+app.use(express.static('./client/uploads'))//saving imgs here
 
 const mongoDB = 'mongodb+srv://jcastorina:dbUserPassword@userdata-echiv.mongodb.net/users?retryWrites=true&w=majority'
 const connection = mongoose.createConnection(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 
 
 require('./models/User.js')

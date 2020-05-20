@@ -9,12 +9,12 @@ const multer = require('multer')
 const upload = multer({limits:{fileSize:10000000}}).single('imageFile')
 const sharp = require('sharp')
 const uuid = require('uuid').v4
-console.log(uuid())
+
 
 router.all('/', function (req, res, next) {
     console.log('req received on \'/\'')
     next() // pass control to the next handler
-  })
+})
 
 //////////////////////////
 //  POST ROUTES         //
@@ -22,7 +22,7 @@ router.all('/', function (req, res, next) {
 
 router.post('/register', auth.isNotAuth, (req, res, next) => {
     const { body } = req;
-    
+    console.log(body)
     const finalUser = new Users(body);
    
     finalUser.setPassword(body.password);
@@ -51,24 +51,43 @@ router.post('/newChar', auth.isAuth, (req,res, next)=>{
 
 
 router.post('/upload', auth.isAuth, (req,res)=>{
-    
+   
+
+
+   // $addToSet
     upload(req, res, async (err) =>{
-    //check for errors, e.g. multer exceed filesize
+    //console.log(req.file)
+        //check for errors, e.g. multer exceed filesize
     if(err||req.file === undefined){
         console.log(err)
         res.send('whoopsy')
     } else {
         //it worked: req.file has file
-        let fileName = uuid() + '.jpeg'
+        let id = req._passport.session.user    
+        
+        let fileName = uuid() + '.png'
+        let originalName = req.file.originalname;
+   
+        Users.findByIdAndUpdate(id,
+            { $push: {  images: fileName } },(err,result)=>{
+                if(err){
+                  console.log(err)
+                }else {
+                    console.log('updated: '+fileName)
+                }
+            })
+      
+      
+        
         var image = await sharp(req.file.buffer)
         
-        .jpeg({
+        .png({
             quality: 40,
         })
         .toFile('./client/uploads/'+fileName)
         .catch( err => { console.log('error: ' + err)})
-        return res.redirect('back');
-        
+        //res.redirect('back');
+  
     }
     }
     )
@@ -106,6 +125,24 @@ router.get('/login', auth.isNotAuth, (req,res)=>{
 })
 
 router.get('/', auth.isAuth, (req,res)=>{
+
+   
+   
+        Users.find((err, users)=>{
+       // console.log(users)
+        let name = req.user.username 
+        let all = [];
+        if (err) return console.err(err);
+
+        for(let i in users){
+            all.push(users[i].username)
+        }
+        
+        res.render('main.ejs', { title: 'Z E T A ('+name+')', message: name, online: all })
+    })
+})
+
+router.get('/myChar', auth.isAuth, (req,res)=>{
         
     Users.find((err, users)=>{
         
@@ -117,7 +154,21 @@ router.get('/', auth.isAuth, (req,res)=>{
             all.push(users[i].username)
         }
         
-        res.render('main.ejs', { title: 'Z E T A ('+name+')', message: name, online: all })
+        let id = req._passport.session.user    
+        
+        
+        var img
+   
+        Users.findById(id,(err,user)=>{
+            if (err) { console.log(err) }
+            else {
+                const { images } = user
+                console.log(images)
+                res.render('myChar.ejs', { title: 'Z E T A ('+name+')', message: name, online: all, images: images })
+            }
+        })
+
+        
     })
 })
 
@@ -151,6 +202,7 @@ router.get('/game', auth.isAuth, (req,res)=>{
 })
 
 
+
 router.get('/upload', auth.isAuth, (req,res)=>{
     
     Users.find((err, users)=>{
@@ -165,6 +217,7 @@ router.get('/upload', auth.isAuth, (req,res)=>{
    })
   
 })
+
 
 //This used to work but stopped working when i did the cookie refactor
 //router.delete('/logout', (req, res) =>{
