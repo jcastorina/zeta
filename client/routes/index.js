@@ -28,11 +28,13 @@ router.post('/register', auth.isNotAuth, (req, res, next) => {
     finalUser.setPassword(body.password);
     console.log(finalUser)
     return finalUser.save()
-      .then(() => { res.redirect('/')})//res.json({ body: finalUser.toAuthJSON() }));
+      .then(() => {res.json({ body: finalUser.toAuthJSON() })})
+      .catch((err)=>{console.log('error saving new user')})
 });
 
+
 router.post('/login', auth.isNotAuth, 
-    passport.authenticate('local', { successRedirect: '/',
+    passport.authenticate('local', { successRedirect: '/about',
                                    failureRedirect: '/login',
                                    failureFlash: true })
 );
@@ -49,25 +51,30 @@ router.post('/newChar', auth.isAuth, (req,res, next)=>{
     res.redirect('/');
 })
 
+router.post('/delete', auth.isAuth, (req,res)=>{
+    let id = req._passport.session.user 
+    let fileName = Object.keys(req.body)[0]
+    fs.unlink('./client/uploads/'+fileName,()=>{
+        console.log('deleted file: ', fileName)
+    })
+    Users.findByIdAndUpdate(id,
+    { $pull: {  images: fileName } },(err,result)=>{
+        if(err){
+          console.log(err)
+        }else {
+            console.log('deleted key: ', fileName)
+        }
+    })  
+})
 
 router.post('/upload', auth.isAuth, (req,res)=>{
-   
-
-
-   // $addToSet
     upload(req, res, async (err) =>{
-    //console.log(req.file)
-        //check for errors, e.g. multer exceed filesize
     if(err||req.file === undefined){
-        console.log(err)
-        res.send('whoopsy')
+        console.log('err',err)
+        res.send('Whoopsy, didn\'t work..  Maybe try again?')
     } else {
-        //it worked: req.file has file
-        let id = req._passport.session.user    
-        
-        let fileName = uuid() + '.png'
-        let originalName = req.file.originalname;
-   
+        let id = req._passport.session.user        
+        let fileName = uuid() + '.png' 
         Users.findByIdAndUpdate(id,
             { $push: {  images: fileName } },(err,result)=>{
                 if(err){
@@ -75,24 +82,17 @@ router.post('/upload', auth.isAuth, (req,res)=>{
                 }else {
                     console.log('updated: '+fileName)
                 }
-            })
-      
-      
+        })      
         
-        var image = await sharp(req.file.buffer)
-        
+        const image = await sharp(req.file.buffer)       
         .png({
             quality: 40,
         })
         .toFile('./client/uploads/'+fileName)
-        .catch( err => { console.log('error: ' + err)})
-        //res.redirect('back');
-  
+        .catch( err => { console.log('error: ' + err)})  
     }
     }
-    )
-    
-    
+    )   
 })
 
 //////////////////////////
@@ -106,7 +106,10 @@ router.post('/upload', auth.isAuth, (req,res)=>{
 //})
 
 router.get('/register', auth.isNotAuth, (req,res)=>{
-    res.render('register.ejs', { title: 'Z E T A'});
+    //res.render('register.ejs', { title: 'Z E T A'});
+    console.log('register accessed')
+    res.json({"test":"you did it"})
+    
 })
 
 async function waitForFlash(req){
@@ -160,11 +163,15 @@ router.get('/myChar', auth.isAuth, (req,res)=>{
             if (err) { console.log(err) }
             else {
                 const { images } = user
-              
-                res.render('myChar.ejs', { title: 'Z E T A ('+name+')', message: name, online: all, images: images, num: images.length })
+                res.json({"message": name, "images": images, "num": images.length})
+                //res.render('myChar.ejs', { title: 'Z E T A ('+name+')', message: name, online: all, images: images, num: images.length })
             }
         })        
     })
+})
+
+router.get('/close', auth.isAuth, (req,res)=>{
+    res.render('close.ejs')
 })
 
 router.get('/newParty', auth.isAuth, (req,res)=>{
@@ -223,6 +230,7 @@ router.get('/upload', auth.isAuth, (req,res)=>{
 //i do it with a str8 up post now
 router.post('/logout', (req, res) =>{
     req.logOut()
+    console.log('user logged out')
     res.redirect('/login')
 })
 

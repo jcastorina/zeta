@@ -12,16 +12,15 @@ init();
 
 function upFile (event) {
     event.preventDefault(); //prevent form from posting without JS
-    var xhttp = new XMLHttpRequest(); //create new AJAX request
+  
     let el = init()
     let file = el.files[0]
 
-    xhttp.open('POST','/upload', true)
     var formData = new FormData();
     formData.append('imageFile', file)
-    xhttp.send(formData)
-    runXHR('16bfd383-7819-4533-b663-0d674515e00c.png')
-    
+ 
+    postXHR('/upload',formData)
+ 
     let previewClone = document.createElement('div')
     previewClone.setAttribute('id','preview')
     
@@ -35,12 +34,10 @@ function upFile (event) {
     preview.style.color = '#00FF00'
     preview.innerHTML = 'SUCCESS'
     formData.delete('imageFile')
-
 }
 
 function handleFiles(files) {
-    fileList = this.files;
-   
+    fileList = this.files;  
     
     for (let i = 0; i < fileList.length; i++){
         
@@ -55,24 +52,18 @@ function handleFiles(files) {
 
         const reader = new FileReader();
         reader.onload = (function(aImg){ return function(e) {aImg.src = e.target.result;};})(img)
-        console.log(img)
-
+      
         reader.readAsDataURL(file);
        
     }
 }
 
+window.addEventListener('click', reportMe, true)
+
 document.getElementById('subbut').onclick = upFile
 
-//xhr section
-
-const xhrButtonSuccess = document.querySelector('.xhr.success');
-const xhrButtonError = document.querySelector('.xhr.error');
-const xhrButtonAbort = document.querySelector('.xhr.abort');
-const log = document.querySelector('.event-log');
-
-function handleEvent(e) {
-    log.textContent = log.textContent + `${e.type}: ${e.loaded} bytes transferred\n`;
+function reportMe() {
+    console.log('someone clicked subbut')
 }
 
 function addListeners(xhr) {
@@ -89,19 +80,17 @@ function runXHR(url) {
 
     const xhr = new XMLHttpRequest();
     addListeners(xhr);
-    xhr.open("GET", url);
+    xhr.open("GET", url, true);
     xhr.send();
     return xhr;  
 }
 
-xhrButtonSuccess.addEventListener('click', () => {
-    runXHR('16bfd383-7819-4533-b663-0d674515e00c.png');
-});
+function postXHR(url,form) {
+    
 
-xhrButtonError.addEventListener('click', () => {
-    runXHR('1234fakestreet');
-});
-
-xhrButtonAbort.addEventListener('click', () => {
-    runXHR('16bfd383-7819-4533-b663-0d674515e00c.png').abort();
-});
+    const xhr = new XMLHttpRequest();
+    addListeners(xhr);
+    xhr.open("POST", url, true);
+    xhr.send(form);
+    return xhr;  
+}

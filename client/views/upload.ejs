@@ -13,26 +13,17 @@
         <pre id="notify" class><h1 id="fader"> </h1></pre>
         <form class="upload" id="upload" action="/#">
             <fieldset id="global"> <legend>Select File</legend>
-                <!--div id="blueScreen"-->
-                    <p id="p0"></p>
+
+             
                     <div id="upload">
-                        <input type="file" id="inputfile"><!--add the "multiple" option at the end: multiple>-->
+                        <input type="file" id="inputfile">
                         <div id="preview"></div>
                         
                     </div>
               
                     <button id="subbut">Upload File</a>
-                <!--button type="submit" id="subbut">Upload</button-->
-                    <!--/div-->
             </fieldset>
         </form>
-        <div class="controls">
-            <input class="xhr success" type="button" name="xhr" value="Click to start XHR (success)" />
-            <input class="xhr error" type="button" name="xhr" value="Click to start XHR (error)" />
-            <input class="xhr abort" type="button" name="xhr" value="Click to start XHR (abort)" />
-        </div>
-        
-        <textarea readonly class="event-log"></textarea>
         <br>
         <br>
         <br>
@@ -46,7 +37,9 @@
         <form action="/" method="GET">
             <button type="submit">Home</button>
         </form>
-
+    
+            <button type="submit" id="close">Close</button>
+    
     </body>
     <script src="../src/upload.js"></script>
     <script src="../src/global.js"></script>

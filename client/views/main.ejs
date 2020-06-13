@@ -10,8 +10,9 @@
     </head>
     <body>
         <h1 style="font-weight: bold">Hey, <strong class="uname"><%= message %></strong>!</h1>
-        <pre id="notify" class style="padding-right: 100px; font-size: large;"><h1 id="fader">The Operator</h1></pre>
-        <fieldset id="global"><legend>Characters</legend>
+        <a href="/upload" method="GET">upload</a>
+        <!--pre id="notify" class style="padding-right: 100px; font-size: large;"><h1 id="fader">The Operator</h1></pre-->
+        <!--fieldset id="global"><legend>Characters</legend>
          
             <div id="blueScreen">
                 <p id="p0"></p>
@@ -28,14 +29,14 @@
                 </div>                
                 
             </div>
-        </fieldset>
+        </fieldset-->
         <br>
         <br>
         <br>
         <div id="main" class="main">
             <strong class="green">ONLINE:</strong> <%= online %>
         </div>
-        <a style="padding-left: 500px" href="/upload" method="GET">upload</a>
+        
         <br>
         <form action="/logout?_method=DELETE" method="POST">
             <button type="submit">Log Out</button>
