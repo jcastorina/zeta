@@ -7,8 +7,8 @@ const Users = new Schema({
     username: String,
     hash: String,
     salt: String,
-    images: [ String ]
-    
+    images: [{ fileName: String,
+                text: String }]
 })
 
 Users.methods.setPassword = function(password) {

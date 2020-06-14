@@ -53,12 +53,14 @@ router.post('/newChar', auth.isAuth, (req,res, next)=>{
 
 router.post('/delete', auth.isAuth, (req,res)=>{
     let id = req._passport.session.user 
-    let fileName = Object.keys(req.body)[0]
+    let fileName = req.body.fileName
+    let _id = req.body._id
+   
     fs.unlink('./client/uploads/'+fileName,()=>{
         console.log('deleted file: ', fileName)
-    })
+    }) 
     Users.findByIdAndUpdate(id,
-    { $pull: {  images: fileName } },(err,result)=>{
+    { $pull: {  images: { _id } } },(err,result)=>{
         if(err){
           console.log(err)
         }else {
@@ -68,28 +70,37 @@ router.post('/delete', auth.isAuth, (req,res)=>{
 })
 
 router.post('/upload', auth.isAuth, (req,res)=>{
+    
     upload(req, res, async (err) =>{
     if(err||req.file === undefined){
         console.log('err',err)
         res.send('Whoopsy, didn\'t work..  Maybe try again?')
     } else {
+        console.log(req.body.text)
         let id = req._passport.session.user        
-        let fileName = uuid() + '.png' 
+        let fileName = uuid() + '.png'
+        let fileKey = {
+            "fileName": fileName,
+            "text": req.body.text
+        }
+        console.log(fileKey)
         Users.findByIdAndUpdate(id,
-            { $push: {  images: fileName } },(err,result)=>{
+            { $push: {  images: fileKey } },(err,result)=>{
                 if(err){
                   console.log(err)
                 }else {
-                    console.log('updated: '+fileName)
+                    console.log('uploaded: '+fileName)
                 }
-        })      
-        
+        })
+
         const image = await sharp(req.file.buffer)       
         .png({
             quality: 40,
         })
         .toFile('./client/uploads/'+fileName)
         .catch( err => { console.log('error: ' + err)})  
+
+        res.json({"res":"success"})
     }
     }
     )   
@@ -162,9 +173,10 @@ router.get('/myChar', auth.isAuth, (req,res)=>{
         Users.findById(id,(err,user)=>{
             if (err) { console.log(err) }
             else {
+             
                 const { images } = user
                 res.json({"message": name, "images": images, "num": images.length})
-                //res.render('myChar.ejs', { title: 'Z E T A ('+name+')', message: name, online: all, images: images, num: images.length })
+              
             }
         })        
     })
