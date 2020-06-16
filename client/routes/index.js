@@ -28,8 +28,9 @@ router.post('/register', auth.isNotAuth, (req, res, next) => {
     finalUser.setPassword(body.password);
     console.log(finalUser)
     return finalUser.save()
-      .then(() => {res.json({ body: finalUser.toAuthJSON() })})
-      .catch((err)=>{console.log('error saving new user')})
+     // .then(() => {res.json({ body: finalUser.toAuthJSON() })})
+     .then(()=>res.json({"register":"success"})) 
+     .catch((err)=>{console.log('error saving new user')})
 });
 
 
@@ -76,7 +77,7 @@ router.post('/upload', auth.isAuth, (req,res)=>{
         console.log('err',err)
         res.send('Whoopsy, didn\'t work..  Maybe try again?')
     } else {
-        console.log(req.body.text)
+ 
         let id = req._passport.session.user        
         let fileName = uuid() + '.png'
         let fileKey = {
@@ -100,11 +101,41 @@ router.post('/upload', auth.isAuth, (req,res)=>{
         .toFile('./client/uploads/'+fileName)
         .catch( err => { console.log('error: ' + err)})  
 
-        res.json({"res":"success"})
+        res.json({"image":"success"})
     }
     }
     )   
 })
+
+    router.post('/addFriend', auth.isAuth, async (req, res)=>{
+        
+        let friend = req.body.a  
+        let id = req._passport.session.user
+        Users.findById(id, (err,user)=>{
+            if(err){console.log(err)}
+            else{
+                for(let i in user.friends){
+                    console.log(user.friends[i])
+                    if(user.friends[i] === friend){
+                        console.log('friend already exists')
+                        return res.json({"friend": "exists"})
+                    }
+                }
+                Users.findByIdAndUpdate(id,
+                    { $push : { friends: friend }}, (err,result)=>{
+                        if(err){
+                            console.log(err)
+                            return res.json({"friend": "fail"})
+                        }
+                        else{
+                            console.log('added ' +friend)
+                            return res.json({"friend": "success"})
+                        }
+                    }
+                )          
+            }
+        })
+    })
 
 //////////////////////////
 //  GET ROUTES          //
@@ -139,11 +170,8 @@ router.get('/login', auth.isNotAuth, (req,res)=>{
 })
 
 router.get('/', auth.isAuth, (req,res)=>{
-
-   
    
         Users.find((err, users)=>{
-       // console.log(users)
         let name = req.user.username 
         let all = [];
         if (err) return console.err(err);
@@ -156,20 +184,53 @@ router.get('/', auth.isAuth, (req,res)=>{
     })
 })
 
+router.get('/allUsersButMe', auth.isAuth, (req,res)=>{
+    Users.find((err,users)=>{
+        
+        if (err) return console.err(err);
+        let username = req.user.username
+        
+        let all = []
+        for(let i in users){
+            if(users[i].username === username){
+                continue
+            } else {
+                all.push(users[i].username)
+            }        
+        }
+        res.json(all)
+      
+    })
+})
+
+router.get('/myFriends', auth.isAuth, (req,res)=>{
+    
+    let id = req._passport.session.user
+
+    Users.findById(id,(err,user)=>{
+        if (err) return console.err(err);
+        res.json(user.friends)
+      //  res.json(JSON.stringify(user.friends))
+    }
+) 
+})
+
 router.get('/myChar', auth.isAuth, (req,res)=>{
         
     Users.find((err, users)=>{
         
         let name = req.user.username 
         let all = [];
+        let a = []
         if (err) return console.err(err);
 
         for(let i in users){
-            all.push(users[i].username)
+            all.push(users[i].username) //.id
+            a.push(users[i])
         }
         
         let id = req._passport.session.user    
-   
+     
         Users.findById(id,(err,user)=>{
             if (err) { console.log(err) }
             else {
