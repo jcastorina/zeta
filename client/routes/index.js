@@ -20,13 +20,11 @@ router.all('/', function (req, res, next) {
 //  POST ROUTES         //
 //////////////////////////
 
-router.post('/register', auth.isNotAuth, (req, res, next) => {
+router.post('/register',  (req, res, next) => {
     const { body } = req;
-    console.log(body)
     const finalUser = new Users(body);
-   
+    
     finalUser.setPassword(body.password);
-    console.log(finalUser)
     return finalUser.save()
      // .then(() => {res.json({ body: finalUser.toAuthJSON() })})
      .then(()=>res.json({"register":"success"})) 
@@ -35,7 +33,7 @@ router.post('/register', auth.isNotAuth, (req, res, next) => {
 
 
 router.post('/login', auth.isNotAuth, 
-    passport.authenticate('local', { successRedirect: '/about',
+    passport.authenticate('local', { successRedirect: '/profile',
                                    failureRedirect: '/login',
                                    failureFlash: true })
 );
@@ -137,6 +135,71 @@ router.post('/upload', auth.isAuth, (req,res)=>{
         })
     })
 
+    router.post('/removeFriend', auth.isAuth, async (req, res)=>{
+        
+        let friend = req.body.a  
+        let id = req._passport.session.user
+        Users.findById(id, (err,user)=>{
+            if(err){console.log(err)}
+            else{
+                let add = true
+                console.log(user.friends)
+                for(let i in user.friends){
+                    console.log('checking '+friend)
+                    console.log(user.friends[i])
+                    if(user.friends[i] !== friend){
+                        
+                   /*    if(user.friends.length === i && add){
+                        */
+                    
+                           continue
+                    }
+
+                     
+                    if(user.friends[i] === friend){
+                        console.log('match')
+                        add = false
+                        
+                        console.log(user.friends[i])
+                        console.log('removing '+friend+'..')  
+                        Users.findByIdAndUpdate(id,
+                            { $pull : { friends: friend }}, (err,result)=>{
+                                if(err){
+                                    console.log(err)
+                                    return res.json({"friend": "err"})
+                                }
+                                else{
+                                    console.log('removed ' +friend)
+                                    return res.json({"friend": "removed"})
+                                }
+                            }
+                        
+                        )
+                     }
+
+                  
+                    }
+                    if(add){
+                        Users.findByIdAndUpdate(id,
+                            { $push : { friends: friend }}, (err,result)=>{
+                                if(err){
+                                    console.log(err)
+                                    return res.json({"friend": "fail"})
+                                }
+                                else{
+                                    console.log('added ' +friend)
+                                    return res.json({"friend": "success"})
+                                }
+                            }
+                        )
+                    }
+
+                }//end else findById
+         
+        })
+       
+    })
+
 //////////////////////////
 //  GET ROUTES          //
 //////////////////////////
@@ -209,7 +272,9 @@ router.get('/myFriends', auth.isAuth, (req,res)=>{
 
     Users.findById(id,(err,user)=>{
         if (err) return console.err(err);
+        console.log('friend fetch')
         res.json(user.friends)
+        console.log(user.friends)
       //  res.json(JSON.stringify(user.friends))
     }
 ) 
