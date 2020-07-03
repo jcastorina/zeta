@@ -10,9 +10,13 @@ const upload = multer({limits:{fileSize:10000000}}).single('imageFile')
 const sharp = require('sharp')
 const uuid = require('uuid').v4
 
-
 router.all('/', function (req, res, next) {
     console.log('req received on \'/\'')
+    next() // pass control to the next handler
+})
+
+router.all('*', function (req, res, next) {
+    console.log('req received in *')
     next() // pass control to the next handler
 })
 
@@ -26,17 +30,23 @@ router.post('/register',  (req, res, next) => {
     
     finalUser.setPassword(body.password);
     return finalUser.save()
-     // .then(() => {res.json({ body: finalUser.toAuthJSON() })})
-     .then(()=>res.json({"register":"success"})) 
+      .then(() => {res.json({ body: finalUser.generateJWT() })})
+     //.then(()=>res.json({"register":"success"})) 
+
      .catch((err)=>{console.log('error saving new user')})
 });
 
 
 router.post('/login', auth.isNotAuth, 
-    passport.authenticate('local', { successRedirect: '/profile',
-                                   failureRedirect: '/login',
-                                   failureFlash: true })
-);
+    passport.authenticate('local'), (req,res)=>{
+
+        var userInfo = {
+            username: req.user.username
+        }
+        res.status(200).send(userInfo)
+    }
+    
+) 
 
 router.post('/newParty', auth.isAuth, (req,res, next)=>{
     const { body } = req;
@@ -78,11 +88,17 @@ router.post('/upload', auth.isAuth, (req,res)=>{
  
         let id = req._passport.session.user        
         let fileName = uuid() + '.png'
+             
+        let scope = req.body.scope.split(',')
+
         let fileKey = {
             "fileName": fileName,
-            "text": req.body.text
+            "text": req.body.text,
+            "scope": [...scope],
+            "timestamp": new Date()
         }
         console.log(fileKey)
+
         Users.findByIdAndUpdate(id,
             { $push: {  images: fileKey } },(err,result)=>{
                 if(err){
@@ -91,6 +107,18 @@ router.post('/upload', auth.isAuth, (req,res)=>{
                     console.log('uploaded: '+fileName)
                 }
         })
+
+        fileKey.scope = null
+        
+        for(let i in scope){
+            Users.findOneAndUpdate({username: scope[i]}, 
+                { $push: { images: fileKey }},
+                (err,result)=>{
+                if(err){console.err(err)}
+                
+                console.log(result.username, ' pushed new img')
+            })      
+        }
 
         const image = await sharp(req.file.buffer)       
         .png({
@@ -143,25 +171,18 @@ router.post('/upload', auth.isAuth, (req,res)=>{
             if(err){console.log(err)}
             else{
                 let add = true
-                console.log(user.friends)
+
                 for(let i in user.friends){
-                    console.log('checking '+friend)
-                    console.log(user.friends[i])
                     if(user.friends[i] !== friend){
-                        
-                   /*    if(user.friends.length === i && add){
-                        */
-                    
+
                            continue
                     }
 
                      
                     if(user.friends[i] === friend){
-                        console.log('match')
+
                         add = false
-                        
-                        console.log(user.friends[i])
-                        console.log('removing '+friend+'..')  
+  
                         Users.findByIdAndUpdate(id,
                             { $pull : { friends: friend }}, (err,result)=>{
                                 if(err){
@@ -169,15 +190,13 @@ router.post('/upload', auth.isAuth, (req,res)=>{
                                     return res.json({"friend": "err"})
                                 }
                                 else{
-                                    console.log('removed ' +friend)
+                                
                                     return res.json({"friend": "removed"})
                                 }
                             }
                         
                         )
-                     }
-
-                  
+                     }             
                     }
                     if(add){
                         Users.findByIdAndUpdate(id,
@@ -187,15 +206,14 @@ router.post('/upload', auth.isAuth, (req,res)=>{
                                     return res.json({"friend": "fail"})
                                 }
                                 else{
-                                    console.log('added ' +friend)
+                              
                                     return res.json({"friend": "success"})
                                 }
                             }
                         )
                     }
 
-                }//end else findById
-         
+                }//end else findById   
         })
        
     })

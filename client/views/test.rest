@@ -1,0 +1,10 @@
+POST https://32frqyoy92.execute-api.us-east-1.amazonaws.com/live/cart
+
+{
+    "user": "Hey"
+}
+
+#####
+GET https://32frqyoy92.execute-api.us-east-1.amazonaws.com/live/item
+
+Content-Type: application/json

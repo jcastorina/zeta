@@ -7,9 +7,21 @@ const Users = new Schema({
     username: String,
     hash: String,
     salt: String,
-    images: [{ fileName: String,
-                text: String }],
-    friends: [ String ]
+    images: [{ 
+        fileName: String,
+        text: String,
+        timestamp: String,
+        scope: [ String ]
+    }],
+    friends: [ String ],
+    feed: [{
+        fileName: String,
+        text: String,
+        author: String,
+        rw: Number,
+        timestamp: String,
+        scope: [ String ]
+    }]
 })
 
 Users.methods.setPassword = function(password) {
